@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        $email=env('EMAIL_ADMIN', '');
+        $email=env('EMAIL_ADMIN', 'david.criollo14@gmail.com');
         $user=User::where('email',$email)->first();
         if(!$user){
             $user=new User();

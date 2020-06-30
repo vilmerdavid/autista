@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Geo;
+use App\Notifications\NotyTemperatura;
 use App\Temperatura;
+use App\User;
 use Illuminate\Http\Request;
 
 class Estaticas extends Controller
@@ -20,7 +22,8 @@ class Estaticas extends Controller
         $temperatura->save();   
 
         if($temperatura->valor>=38){
-            
+            $user=User::first();
+            $user->notify(new NotyTemperatura($temperatura->valor));
         }
         
         $geo=Geo::first();
