@@ -4,21 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Geo;
 use App\Notifications\NotyTemperatura;
+use App\Pulso;
 use App\Temperatura;
 use App\User;
 use Illuminate\Http\Request;
 
 class Estaticas extends Controller
 {
-   public function ingresarDatos($tem,$lat,$lng)
+   public function ingresarDatos($tem,$pul,$lat,$lng)
     {
-        $nuevo_valor=floatval($tem);
+        $nuevo_valor_temp=floatval($tem);
+        $nuevo_valor_pul=floatval($pul);
         
         $temperatura=Temperatura::first();
         if(!$temperatura){
             $temperatura=new Temperatura();
         }
-        $temperatura->valor=$nuevo_valor;
+        $temperatura->valor=$nuevo_valor_temp;
         $temperatura->save();   
 
         if($temperatura->valor>=38){
@@ -26,6 +28,13 @@ class Estaticas extends Controller
             $user->notify(new NotyTemperatura($temperatura->valor));
         }
         
+        $pulso=Pulso::first();
+        if(!$pulso){
+            $pulso =new Pulso();
+        }
+        $pulso->valor=$nuevo_valor_pul;
+        $pulso->save();
+
         $geo=Geo::first();
         if(!$geo){
             $geo=new Geo();
@@ -33,6 +42,8 @@ class Estaticas extends Controller
         $geo->lat=$lat;
         $geo->lng=$lng;
         $geo->save();
+
+
         
         return response()->json(['estado'=>'si']);
     }

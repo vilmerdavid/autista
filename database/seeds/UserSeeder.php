@@ -1,6 +1,7 @@
 <?php
 
 use App\Geo;
+use App\Pulso;
 use App\Temperatura;
 use App\User;
 use Illuminate\Database\Seeder;
@@ -39,6 +40,13 @@ class UserSeeder extends Seeder
             $geo->lat='0';
             $geo->lng='0';
             $geo->save();
+        }
+
+        $pul=Pulso::first();
+        if(!$pul){
+            $pul=new Pulso();
+            $pul->valor=0;
+            $pul->save();
         }
     }
 }

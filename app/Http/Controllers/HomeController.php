@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 use App\Geo;
+use App\Pulso;
 use App\Temperatura;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -43,5 +44,12 @@ class HomeController extends Controller
         return response()->json($data);
     }
 
+    public function obtenerPulsos()
+    {
+        $pulso=Pulso::first();
+        $fecha=$pulso->updated_at?'Última fecha: '.$pulso->updated_at->toDateTimeString():'';
+        $data = array('pulso' =>  $pulso->valor??0,'fecha'=>$fecha);
+        return response()->json($data);
+    }
     
 }

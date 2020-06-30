@@ -26,7 +26,7 @@ Route::get('/', function () {
 
 Route::group(['middleware' => 'cors'], function()
 {
-    Route::get('/ingresar-datos/{tem}/{lat}/{lng}', 'Estaticas@ingresarDatos')->name('ingresarDatos');
+    Route::get('/ingresar-datos/{tem}/{pul}/{lat}/{lng}', 'Estaticas@ingresarDatos')->name('ingresarDatos');
 });
 
 
@@ -36,6 +36,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/temperaturas', 'HomeController@obtenerTemperatura')->name('temperaturas');
 Route::get('/obtener-lat-lng', 'HomeController@obtenerLatitudLongitud')->name('obtenerLatLng');
+Route::get('/pulsos', 'HomeController@obtenerPulsos')->name('pulsos');
 
 
 

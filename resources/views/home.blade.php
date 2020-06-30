@@ -109,6 +109,9 @@
              
           </figure>
         </div>
+        <div class="card-footer">
+          <h1 id="valor_pulso"></h1>
+        </div>
       </div>
      </div>
      <div class="col-md-6">
@@ -236,6 +239,13 @@
 
   }, 2000);
 
+
+  setInterval(() => {
+      $.get( "{{ route('pulsos') }}", function( data ) {
+            newVal=parseInt(data.pulso)
+            $('#valor_pulso').html(newVal)            
+      });
+  }, 2000);
 
  </script>
  
