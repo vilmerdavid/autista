@@ -1,108 +1,182 @@
-<!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- CSRF Token -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>{{ config('app.name', 'Laravel') }}</title>
-
-      <!-- MDB icon -->
-    <link rel="icon" href="{{ asset('mdb/img/mdb-favicon.ico') }}" type="image/x-icon">
-    
-    <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="{{ asset('mdb/css/bootstrap.min.css') }}">
-
-
-      <!-- jQuery -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Geo en vivo</title>
     <script type="text/javascript" src="{{ asset('mdb/js/jquery.min.js') }}"></script>
-    <!-- Bootstrap tooltips -->
-    <script type="text/javascript" src="{{ asset('mdb/js/popper.min.js') }}"></script>
-    <!-- Bootstrap core JavaScript -->
-    <script type="text/javascript" src="{{ asset('mdb/js/bootstrap.min.js') }}"></script>
-    
-    <style>
-        .map-container{
-          overflow:hidden;
-          padding-bottom:56.25%;
-          position:relative;
-          height:0;
-        }
-        .map-container iframe{
-          left:0;
-          top:0;
-          height:100%;
-          width:100%;
-          position:absolute;
-        }
-      </style>
-      
-      <style>
-        /* Always set the map height explicitly to define the size of the div
-         * element that contains the map. */
-        #map {
-          height: 100%;
-        }
-        /* Optional: Makes the sample page fill the window. */
-        html, body {
-          height: 100%;
-          margin: 0;
-          padding: 0;
-        }
-      </style>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4bcJ39miYRDXIr4ux3484nqQP1XqS9Bw&callback=initMap&libraries=&v=weekly"
+      defer
+    ></script>
+    <style type="text/css">
+      #right-panel {
+        font-family: "Roboto", "sans-serif";
+        line-height: 30px;
+        padding-left: 10px;
+      }
 
-</head>
-<body>
-  <a href="{{ route('migeo') }}" class="btn btn-info btn-block">Actualizar ubicación</a>
-     <!--Google map-->
-     <div id="map" class="z-depth-1-half map-container" style="height: 500px">
-            
-    </div>
-    <script type="text/javascript">
+      #right-panel select,
+      #right-panel input {
+        font-size: 15px;
+      }
 
-    var map, infoWindow;
+      #right-panel select {
+        width: 100%;
+      }
+
+      #right-panel i {
+        font-size: 12px;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        height: 100%;
+        float: left;
+        width: 63%;
+        height: 100%;
+      }
+
+      #right-panel {
+        float: right;
+        width: 34%;
+        height: 100%;
+      }
+
+      .panel {
+        height: 100%;
+        overflow: auto;
+      }
+
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: "Roboto", "sans-serif";
+        line-height: 30px;
+        padding-left: 10px;
+      }
+    </style>
+      <link rel="stylesheet" href="{{ asset('mdb/css/bootstrap.min.css') }}">
+    <script>
+      (function(exports) {
+        "use strict";
+        
+        var lat={{ $geo->lat}};
+        var lng={{ $geo->lng}};
+        var LatLngOrigin = {lat: lat, lng: lng};
+        var LatLngDestination={lat:-1.049779, lng:-78.587351}
+
+        var directionsService;
+        var directionsRenderer;
+
         function initMap() {
-            map = new google.maps.Map(document.getElementById('map'), {
-            center: {lat: -34.397, lng: 150.644},
-            zoom: 6
-            });
-            infoWindow = new google.maps.InfoWindow;
+          var map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 4,
+            center: LatLngOrigin
+          });
+          directionsService = new google.maps.DirectionsService();
+          directionsRenderer = new google.maps.DirectionsRenderer({
+            
+            map: map,
+            panel: document.getElementById("right-panel")
+          });
+          directionsRenderer.addListener("directions_changed", function() {
+            computeTotalDistance(directionsRenderer.getDirections());
+          });
+          displayRoute(
+            directionsService,
+            directionsRenderer
+          );
 
-            // Try HTML5 geolocation.
-            if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var pos = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-                };
-
-                infoWindow.setPosition(pos);
-                infoWindow.setContent('Location found.');
-                infoWindow.open(map);
-                map.setCenter(pos);
-            }, function() {
-                handleLocationError(true, infoWindow, map.getCenter());
+          document
+            .getElementById("mode")
+            .addEventListener("change", function() {
+              displayRoute(directionsService, directionsRenderer);
             });
-            } else {
-            // Browser doesn't support Geolocation
-            handleLocationError(false, infoWindow, map.getCenter());
+
+        }
+
+        function displayRoute( service, display) {
+          var selectedMode = document.getElementById("mode").value;
+
+          service.route(
+            {
+              origin: LatLngOrigin,
+              destination: LatLngDestination,
+              travelMode: google.maps.TravelMode[selectedMode],
+              avoidTolls: true
+            },
+            function(response, status) {
+              if (status === "OK") {
+                display.setDirections(response);
+              } else {
+                console.log("No se pudieron mostrar las indicaciones debido a:" + status);
+              }
             }
+          );
         }
 
-        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-            infoWindow.setPosition(pos);
-            infoWindow.setContent(browserHasGeolocation ?
-                                'Error: The Geolocation service failed.' :
-                                'Error: Your browser doesn\'t support geolocation.');
-            infoWindow.open(map);
+        setInterval(function(){
+          $.get("{{ route('obtenerLatLng') }}",{}, function(json) {
+            var ltx=parseFloat(json.latitude);
+            var lnx=parseFloat(json.longitude);
+            var LatLng = {lat:ltx, lng:lnx};
+              
+              if(JSON.stringify(LatLng)!=JSON.stringify(LatLngOrigin)){
+                LatLngOrigin=LatLng;
+                displayRoute(
+                  directionsService,
+                  directionsRenderer
+                );
+              }
+          });
+        },2000);
+
+
+
+        function computeTotalDistance(result) {
+          var total = 0;
+          var myroute = result.routes[0];
+
+          for (var i = 0; i < myroute.legs.length; i++) {
+            total += myroute.legs[i].distance.value;
+          }
+
+          total = total / 1000;
+          document.getElementById("total").innerHTML = total + " km";
         }
 
+        exports.computeTotalDistance = computeTotalDistance;
+        exports.displayRoute = displayRoute;
+        exports.initMap = initMap;
+      })((this.window = this.window || {}));
     </script>
-
-<script async defer
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4bcJ39miYRDXIr4ux3484nqQP1XqS9Bw&callback=initMap">
-</script>
-</body>
+  </head>
+  <body>
+    <div id="floating-panel">
+      <b>Modo de viaje: </b>
+      <select id="mode">
+        <option value="WALKING">Caminando</option>
+        <option value="DRIVING">Conducción</option>
+        <option value="BICYCLING">Montar en bicicleta</option>
+        <option value="TRANSIT">Tránsito</option>
+      </select>
+    </div>
+    <div id="map"></div>
+    <div id="right-panel" class="card">
+      <a href="" class="btn btn-primary btn-block my-2">Actualizar mapa</a>
+      <p>Distancia total: <span id="total"></span></p>
+    </div>
+  </body>
 </html>

@@ -37,8 +37,8 @@ class UserSeeder extends Seeder
         $geo=Geo::first();
         if(!$geo){
             $geo=new Geo();
-            $geo->lat='0';
-            $geo->lng='0';
+            $geo->lat='-1.047717';
+            $geo->lng='-78.588130';
             $geo->save();
         }
 
