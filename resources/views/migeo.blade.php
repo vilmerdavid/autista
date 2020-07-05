@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
   <head>
     <title>Geo en vivo</title>
     <script type="text/javascript" src="{{ asset('mdb/js/jquery.min.js') }}"></script>
