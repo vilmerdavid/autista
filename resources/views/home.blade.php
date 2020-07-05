@@ -90,12 +90,49 @@
 
   }
 
+  #container {
+      height: 400px; 
+  }
+
+  .highcharts-figure, .highcharts-data-table table {
+      min-width: 310px; 
+      max-width: 500px;
+      margin: 1em auto;
+  }
+
+  .highcharts-data-table table {
+      font-family: Verdana, sans-serif;
+      border-collapse: collapse;
+      border: 1px solid #EBEBEB;
+      margin: 10px auto;
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
+  }
+  .highcharts-data-table caption {
+      padding: 1em 0;
+      font-size: 1.2em;
+      color: #555;
+  }
+  .highcharts-data-table th {
+    font-weight: 600;
+      padding: 0.5em;
+  }
+  .highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
+      padding: 0.5em;
+  }
+  .highcharts-data-table thead tr, .highcharts-data-table tr:nth-child(even) {
+      background: #f8f8f8;
+  }
+  .highcharts-data-table tr:hover {
+      background: #f1f7ff;
+  }
 </style>
 
 <link rel="stylesheet" href="{{ asset('confirm/dist/jquery-confirm.min.css') }}">
 <script src="{{ asset('confirm/dist/jquery-confirm.min.js') }}"></script>
 
- <div class="container">
+ <div class="container-fluid">
    <div class="row">
      <div class="col-md-6">
       <div class="card">
@@ -110,14 +147,18 @@
           </figure>
         </div>
         <div class="card-footer">
-          <h1 id="valor_pulso"></h1>
+          <p>Frecuencia cardíaca <small id="text_fecha_frecuencia"></small></p>
+          <figure class="highcharts-figure-pulso">
+            <div id="container"></div>
+        </figure>
+
         </div>
       </div>
      </div>
      <div class="col-md-6">
       <div class="card">
         <div class="card-header">
-          Geolocalización
+          Geolocalización <small id="fecha_geo"></small>
         </div>
         <div class="card-body">
           <!--Google map-->
@@ -239,13 +280,95 @@
 
   }, 2000);
 
+// ----------
+  Highcharts.chart('container', {
 
-  setInterval(() => {
-      $.get( "{{ route('pulsos') }}", function( data ) {
-            newVal=parseInt(data.pulso)
-            $('#valor_pulso').html(newVal)            
-      });
-  }, 2000);
+  chart: {
+      type: 'gauge',
+      alignTicks: false,
+      plotBackgroundColor: null,
+      plotBackgroundImage: null,
+      plotBorderWidth: 0,
+      plotShadow: false
+  },
+
+  title: {
+      text: null
+  },
+
+  pane: {
+      startAngle: -150,
+      endAngle: 150
+  },
+
+  yAxis: [{
+      min: 0,
+      max: 200,
+      lineColor: '#339',
+      tickColor: '#339',
+      minorTickColor: '#339',
+      offset: -25,
+      lineWidth: 2,
+      labels: {
+          distance: -20,
+          rotation: 'auto'
+      },
+      tickLength: 5,
+      minorTickLength: 5,
+      endOnTick: false
+  }],
+  exporting: {
+          enabled: false
+      },
+
+  series: [{
+      name: 'Frecuancia cardíaca',
+      data: [0],
+      dataLabels: {
+          formatter: function () {
+              var kmh = this.y;
+              return '<span style="color:#339">' + kmh + ' pulsos por segundo</span><br/>';
+          },
+          backgroundColor: {
+              linearGradient: {
+                  x1: 0,
+                  y1: 0,
+                  x2: 0,
+                  y2: 1
+              },
+              stops: [
+                  [0, '#DDD'],
+                  [1, '#FFF']
+              ]
+          }
+      },
+     
+      tooltip: {
+          valueSuffix: ' pulsos por segundo'
+      }
+  }]
+
+  },
+  // Add some life
+  function (chart) {
+    setInterval(function () {
+        if (chart.axes) { // not destroyed
+            var point = chart.series[0].points[0];
+            
+            $.get( "{{ route('pulsos') }}", function( data ) {
+                newVal = parseInt(data.pulso);
+                point.update(newVal);
+                $('#text_fecha_frecuencia').html(data.fecha)
+
+            });
+        }
+    }, 2000);
+
+  });
+
+// -------
+
+
 
  </script>
  
@@ -278,6 +401,7 @@
       $.get("{{ route('obtenerLatLng') }}",{}, function(json) {
           var LatLng = new google.maps.LatLng(json.latitude, json.longitude);
           marker.setPosition(LatLng);
+          $('#fecha_geo').html(json.fecha)
       });
     },2000);
 
