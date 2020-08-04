@@ -37,13 +37,7 @@ class HomeController extends Controller
         return response()->json($data);
     }
 
-    public function obtenerLatitudLongitud()
-    {
-        $geo=Geo::first();
-        $fecha=$geo->updated_at?'Última fecha: '.$geo->updated_at->toDateTimeString():'';
-        $data = array('latitude' => $geo->lat??null,'longitude'=>$geo->lng??null,'fecha'=>$fecha );
-        return response()->json($data);
-    }
+    
 
     public function obtenerPulsos()
     {

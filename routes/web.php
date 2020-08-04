@@ -38,7 +38,7 @@ Route::get('/migeo', function () {
     // Artisan::call('key:generate');
     // Artisan::call('migrate:fresh --seed');
 });
-
+Route::get('/obtener-lat-lng', 'Estaticas@obtenerLatitudLongitud')->name('obtenerLatLng');
 Route::group(['middleware' => 'cors'], function()
 {
     Route::get('/ingresar-datos/{tem}/{pul}/{lat}/{lng}', 'Estaticas@ingresarDatos')->name('ingresarDatos');
@@ -50,7 +50,7 @@ Auth::routes(['register' => false]);
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/temperaturas', 'HomeController@obtenerTemperatura')->name('temperaturas');
-Route::get('/obtener-lat-lng', 'HomeController@obtenerLatitudLongitud')->name('obtenerLatLng');
+
 Route::get('/pulsos', 'HomeController@obtenerPulsos')->name('pulsos');
 
 
