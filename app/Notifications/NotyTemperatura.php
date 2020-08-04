@@ -10,15 +10,17 @@ use Illuminate\Notifications\Notification;
 class NotyTemperatura extends Notification
 {
     use Queueable;
-    protected $valor;
+    protected $msg;
+    
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($valor)
+    public function __construct($msg)
     {
-        $this->valor=$valor;
+        
+        $this->msg=$msg;
     }
 
     /**
@@ -41,8 +43,8 @@ class NotyTemperatura extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->subject('Nuevo valor de temperatura')
-                    ->line('El paciente acaba de obtener un nuevo valor de temperatura de: '.$this->valor)
+                    ->subject('Aviso de temperatura y pulso cardiaco')
+                    ->line($this->msg)
                     ->line('Gracias por usar nuestra aplicación.');
     }
 

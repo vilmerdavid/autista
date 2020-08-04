@@ -75,7 +75,7 @@
         var lat={{ $geo->lat}};
         var lng={{ $geo->lng}};
         var LatLngOrigin = {lat: lat, lng: lng};
-        var LatLngDestination={lat:-1.049779, lng:-78.587351}
+        var LatLngDestination={lat:-0.520052, lng:-78.571506}
 
         var directionsService;
         var directionsRenderer;

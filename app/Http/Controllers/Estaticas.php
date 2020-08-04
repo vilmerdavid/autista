@@ -13,6 +13,9 @@ class Estaticas extends Controller
 {
    public function ingresarDatos($tem,$pul,$lat,$lng)
     {
+        $msg_tem='ALERTA, BRYAN TEMPERATURA ALTA: ';
+        $msg_pul='ALERTA, BRYAN FRECUENCIA CARDIACA ALTA';
+
         $nuevo_valor_temp=floatval($tem);
         $nuevo_valor_pul=floatval($pul);
         
@@ -24,8 +27,15 @@ class Estaticas extends Controller
         $temperatura->save();   
 
         if($temperatura->valor>=38){
-            $user=User::first();
-            $user->notify(new NotyTemperatura($temperatura->valor));
+            $user=new User();
+            $user->email='qmedgazu@hotmail.com';
+            $user->notify(new NotyTemperatura($msg_tem.' '.$temperatura->valor.' °C'));
+        }
+
+        if($temperatura->valor>=38){
+            $user=new User();
+            $user->email='carol-myky@hotmail.com';
+            $user->notify(new NotyTemperatura($msg_tem.' '.$temperatura->valor.' °C'));
         }
         
         $pulso=Pulso::first();
@@ -34,6 +44,17 @@ class Estaticas extends Controller
         }
         $pulso->valor=$nuevo_valor_pul;
         $pulso->save();
+
+        if($pulso->valor>=95){
+            $user=new User();
+            $user->email='qmedgazu@hotmail.com';
+            $user->notify(new NotyTemperatura($msg_pul.' '.$pulso->valor.' PULSOS POR MINUTO'));
+        }
+        if($pulso->valor>=95){
+            $user=new User();
+            $user->email='carol-myky@hotmail.com';
+            $user->notify(new NotyTemperatura($msg_pul.' '.$pulso->valor.' PULSOS POR MINUTO'));
+        }
 
         $geo=Geo::first();
         if(!$geo){

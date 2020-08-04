@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        $email=env('EMAIL_ADMIN', 'david.criollo14@gmail.com');
+        $email='paultk4646@gmail.com';
         $user=User::where('email',$email)->first();
         if(!$user){
             $user=new User();
@@ -37,8 +37,8 @@ class UserSeeder extends Seeder
         $geo=Geo::first();
         if(!$geo){
             $geo=new Geo();
-            $geo->lat='-1.047717';
-            $geo->lng='-78.588130';
+            $geo->lat='-0.520052';
+            $geo->lng='-78.571506';
             $geo->save();
         }
 

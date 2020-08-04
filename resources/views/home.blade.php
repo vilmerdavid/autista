@@ -136,9 +136,9 @@
    <div class="row">
      <div class="col-md-6">
       <div class="card">
-        <div class="card-header">
-          Temperatura 
-          <small id="fecha_temp"></small>    
+        <div class="card-header   light-blue accent-1">
+          <h4><strong>Temperatura</strong> <small id="fecha_temp"></small> </h4>
+             
         </div>
         <div class="card-body" id="table">
             <figure class="highcharts-figure">
@@ -146,19 +146,23 @@
              
           </figure>
         </div>
-        <div class="card-footer">
-          <p>Frecuencia cardíaca <small id="text_fecha_frecuencia"></small></p>
+      </div>
+
+      <div class="card mt-3">
+        <div class="card-header  light-blue accent-1">
+          <h4><strong>Frecuencia cardíaca</strong> <small id="text_fecha_frecuencia"></small></h4>
+        </div>
+        <div class="card-body">
           <figure class="highcharts-figure-pulso">
             <div id="container"></div>
         </figure>
-
         </div>
       </div>
      </div>
      <div class="col-md-6">
       <div class="card">
-        <div class="card-header">
-          Geolocalización <small id="fecha_geo"></small>
+        <div class="card-header  light-blue accent-1">
+          <h4><strong>Geolocalización</strong> <small id="fecha_geo"></small></h4>
         </div>
         <div class="card-body">
           <!--Google map-->
@@ -327,7 +331,7 @@
       dataLabels: {
           formatter: function () {
               var kmh = this.y;
-              return '<span style="color:#339">' + kmh + ' pulsos por segundo</span><br/>';
+              return '<span style="color:#339">' + kmh + ' pulsos por minuto</span><br/>';
           },
           backgroundColor: {
               linearGradient: {
@@ -344,7 +348,7 @@
       },
      
       tooltip: {
-          valueSuffix: ' pulsos por segundo'
+          valueSuffix: ' pulsos por minuto'
       }
   }]
 
